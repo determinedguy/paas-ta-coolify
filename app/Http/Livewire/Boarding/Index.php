@@ -61,10 +61,11 @@ uZx9iFkCELtxrh31QJ68AAAAEXNhaWxANzZmZjY2ZDJlMmRkAQIDBA==
     }
     public function explanation()
     {
-        if (isCloud()) {
-            return $this->setServerType('remote');
-        }
-        $this->currentState = 'select-server-type';
+        // if (isCloud()) {
+        //     return $this->setServerType('remote');
+        // }
+        // $this->currentState = 'select-server-type';
+        $this->setServerType();
     }
 
     public function restartBoarding()
@@ -80,29 +81,15 @@ uZx9iFkCELtxrh31QJ68AAAAEXNhaWxANzZmZjY2ZDJlMmRkAQIDBA==
         return redirect()->route('dashboard');
     }
 
-    public function setServerType(string $type)
+    public function setServerType()
     {
-        $this->selectedServerType = $type;
-        if ($this->selectedServerType === 'localhost') {
-            $this->createdServer = Server::find(0);
-            if (!$this->createdServer) {
-                return $this->emit('error', 'Localhost server is not found. Something went wrong during installation. Please try to reinstall or contact support.');
-            }
-            $this->serverPublicKey = $this->createdServer->privateKey->publicKey();
-            return $this->validateServer('localhost');
-        } elseif ($this->selectedServerType === 'remote') {
-            $this->privateKeys = PrivateKey::ownedByCurrentTeam(['name'])->where('id', '!=', 0)->get();
-            if ($this->privateKeys->count() > 0) {
-                $this->selectedExistingPrivateKey = $this->privateKeys->first()->id;
-            }
-            $this->servers = Server::ownedByCurrentTeam(['name'])->where('id', '!=', 0)->get();
-            if ($this->servers->count() > 0) {
-                $this->selectedExistingServer = $this->servers->first()->id;
-                $this->currentState = 'select-existing-server';
-                return;
-            }
-            $this->currentState = 'private-key';
+        // $this->selectedServerType === 'localhost'
+        $this->createdServer = Server::find(0);
+        if (!$this->createdServer) {
+            return $this->emit('error', 'Localhost server is not found. Something went wrong during installation. Please try to reinstall or contact support.');
         }
+        $this->serverPublicKey = $this->createdServer->privateKey->publicKey();
+        return $this->validateServer('localhost');
     }
     public function selectExistingServer()
     {
