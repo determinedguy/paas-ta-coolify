@@ -67,12 +67,11 @@ class Controller extends BaseController
     }
     public function boarding()
     {
-        return view('boarding');
-        // if (currentTeam()->boarding || isDev()) {
-        //     return view('boarding');
-        // } else {
-        //     return redirect()->route('dashboard');
-        // }
+        if (currentTeam()->boarding || isDev()) {
+            return view('boarding');
+        } else {
+            return redirect()->route('dashboard');
+        }
     }
 
     public function settings()
