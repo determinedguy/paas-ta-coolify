@@ -37,17 +37,21 @@ class User extends Authenticatable implements SendsEmail
     {
         parent::boot();
         static::created(function (User $user) {
-            $team = [
-                'name' => $user->name . "'s Team",
-                'personal_team' => true,
-                'show_boarding' => true
-            ];
             if ($user->id === 0) {
-                $team['id'] = 0;
-                $team['name'] = 'Root Team';
+                $team = [
+                    'id' => 0,
+                    'name' => "Main Team",
+                    'personal_team' => true,
+                    'show_boarding' => true
+                ];
+
+                $new_team = Team::create($team);
+                $user->teams()->attach($new_team, ['role' => 'owner']);
             }
-            $new_team = Team::create($team);
-            $user->teams()->attach($new_team, ['role' => 'owner']);
+            else {
+                $team = Team::where('id', '=', 0);
+                $user->teams()->attach($team, ['role' => 'member']);
+            }
         });
     }
     public function createToken(string $name, array $abilities = ['*'], DateTimeInterface $expiresAt = null)
