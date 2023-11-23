@@ -49,7 +49,7 @@ class User extends Authenticatable implements SendsEmail
                 $user->teams()->attach($new_team, ['role' => 'owner']);
             }
             else {
-                $team = Team::where('id', 0)->get();
+                $team = Team::where('id', 0)->first();
                 $team->update(['show_boarding' => true]);
                 $user->teams()->attach($team, ['role' => 'member']);
             }
